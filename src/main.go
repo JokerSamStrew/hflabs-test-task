@@ -13,5 +13,12 @@ func main() {
 		log.Fatalf("Unable gain access to document: %v", err)
 	}
 
-	fmt.Printf("%v", doc.Title)
+	fmt.Println(doc.Title)
+
+	codes, err := getCurrentTable()
+	if err != nil {
+		log.Fatalf("Unable to retrieve response codes info %v", err)
+	}
+
+	fmt.Println(codes)
 }
