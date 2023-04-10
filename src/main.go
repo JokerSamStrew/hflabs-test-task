@@ -2,18 +2,27 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"log"
 )
 
 const docId = "1sY0nvgfcSFW7Y8j58gDhXNkLRtRHxQ_DgNQKwX8Lgqw"
 
 func main() {
-	// codes, err := getCurrentTable()
+	codes, err := getCurrentTable()
+	if err != nil {
+		log.Fatalf("Unable to retrieve response codes info %v", err)
+	}
+
+	fmt.Println(codes)
+
+	// b, err := os.ReadFile("errorcodes.html") // just pass the file name
 	// if err != nil {
-	// 	log.Fatalf("Unable to retrieve response codes info %v", err)
+	// 	panic(err)
 	// }
 
-	// fmt.Println(codes)
+	for i, item := range parseResponseTable(codes) {
+		fmt.Printf("%v %v\t\t%v\n", i, item.ResponseCode, item.Description)
+	}
 
 	// doc, err := getdocaccess(docId, "client_secret.json")
 	// if err != nil {
@@ -21,11 +30,4 @@ func main() {
 	// }
 
 	// fmt.Println(doc.Title)
-
-	b, err := os.ReadFile("errorcodes.html") // just pass the file name
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(parseResponseTable(string(b)))
 }

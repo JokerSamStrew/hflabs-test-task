@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -35,8 +34,16 @@ func getCurrentTable() (string, error) {
 	return value, err
 }
 
-func parseResponseTable(responseTable string) string {
+type TableRow struct {
+	ResponseCode string
+	Description  string
+}
+
+func parseResponseTable(responseTable string) []TableRow {
 	tkn := html.NewTokenizer(strings.NewReader(responseTable))
+	rows := make([]TableRow, 0, 10)
+	var row TableRow
+	isResponseCode := false
 
 	for {
 		tt := tkn.Next()
@@ -44,14 +51,24 @@ func parseResponseTable(responseTable string) string {
 		switch {
 
 		case tt == html.ErrorToken:
-			return "end"
+			return rows
+
 		case tt == html.StartTagToken:
 			t := tkn.Token()
 			switch {
 			case t.Data == "tr":
-				fmt.Println()
+				if row.ResponseCode != "" || row.Description != "" {
+					rows = append(rows, row)
+					row = TableRow{}
+				}
 			case t.Data == "td" || t.Data == "th":
-				fmt.Printf("\t")
+				isResponseCode = !isResponseCode
+			case t.Data == "li":
+				if isResponseCode {
+					row.ResponseCode += "\n"
+				} else {
+					row.Description += "\n"
+				}
 			}
 
 		case tt == html.TextToken:
@@ -61,7 +78,12 @@ func parseResponseTable(responseTable string) string {
 				continue
 			}
 
-			fmt.Printf("%v", text)
+			if isResponseCode {
+				row.ResponseCode += t.Data
+			} else {
+				row.Description += t.Data
+			}
 		}
 	}
+
 }
