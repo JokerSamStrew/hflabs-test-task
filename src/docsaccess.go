@@ -66,7 +66,7 @@ func saveToken(path string, token *oauth2.Token) {
 	json.NewEncoder(f).Encode(token)
 }
 
-func getdocaccess(docId, credentialsPath string) (*docs.Document, error) {
+func getdocaccess(docId, credentialsPath string) (*docs.Service, error) {
 	ctx := context.Background()
 	b, err := os.ReadFile(credentialsPath)
 	if err != nil {
@@ -74,7 +74,7 @@ func getdocaccess(docId, credentialsPath string) (*docs.Document, error) {
 	}
 
 	// If modifying these scopes, delete your previously saved token.json.
-	config, err := google.ConfigFromJSON(b, "https://www.googleapis.com/auth/documents.readonly")
+	config, err := google.ConfigFromJSON(b, "https://www.googleapis.com/auth/documents")
 	if err != nil {
 		return nil, fmt.Errorf("Unable to parse client secret file to config: %v", err)
 	}
@@ -85,12 +85,5 @@ func getdocaccess(docId, credentialsPath string) (*docs.Document, error) {
 		return nil, fmt.Errorf("Unable to retrieve Docs client: %v", err)
 	}
 
-	// Prints the title of the requested doc:
-	// https://docs.google.com/document/d/195j9eDD3ccgjQRttHhJPymLJUCOUjs-jmwTrekvdjFE/edit
-	doc, err := srv.Documents.Get(docId).Do()
-	if err != nil {
-		return nil, fmt.Errorf("Unable to retrieve data from document: %v", err)
-	}
-
-	return doc, nil
+	return srv, nil
 }
