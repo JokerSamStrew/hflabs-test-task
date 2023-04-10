@@ -37,13 +37,37 @@ func main() {
 	}
 
 	fmt.Println(doc.Title)
+	var maxEndIndex int64 = 0
+	for _, se := range doc.Body.Content {
+		if maxEndIndex < se.EndIndex {
+			maxEndIndex = se.EndIndex
+		}
+	}
+	fmt.Println(maxEndIndex)
+
+	requests := []*docs.Request{}
+
+	if maxEndIndex > 2 {
+		requests = append(requests, &docs.Request{
+			DeleteContentRange: &docs.DeleteContentRangeRequest{
+				Range: &docs.Range{StartIndex: 1, EndIndex: maxEndIndex - 1},
+			}})
+	}
+
 	insertTableRequest := docs.InsertTableRequest{
 		Location: &docs.Location{Index: 1},
 		Rows:     6,
 		Columns:  2,
 	}
-	request := docs.BatchUpdateDocumentRequest{}
-	request.Requests = append(request.Requests, &docs.Request{InsertTable: &insertTableRequest})
+
+	requests = append(requests, &docs.Request{InsertTable: &insertTableRequest})
+
+	if len(requests) == 0 {
+		log.Fatalf("No requests to send")
+	}
+
+	request := docs.BatchUpdateDocumentRequest{Requests: requests}
+
 	response, err := srv.Documents.BatchUpdate(docId, &request).Do()
 	if err != nil {
 		log.Fatalf("BatchUpdate failed: %v", err)
