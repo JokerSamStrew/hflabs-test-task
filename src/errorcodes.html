@@ -1,0 +1,48 @@
+<table>
+    <colgroup>
+        <col />
+        <col />
+    </colgroup>
+    <thead>
+        <tr>
+            <th>HTTP-код ответа</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>200</td>
+            <td>Запрос успешно обработан</td>
+        </tr>
+        <tr>
+            <td>400</td>
+            <td>Некорректный запрос (невалидный JSON или XML)</td>
+        </tr>
+        <tr>
+            <td>405</td>
+            <td>Запрос сделан с методом, отличным от GET или POST</td>
+        </tr>
+        <tr>
+            <td>413</td>
+            <td>
+                <p>Нарушены ограничения:</p>
+                <ul>
+                    <li><span style="letter-spacing: 0.0px;">длина параметра <code>query</code> больше 300
+                            символов</span></li>
+                    <li><span style="letter-spacing: 0.0px;">или количество ограничений в параметре
+                            <code>locations</code> больше 100</span></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="1">500</td>
+            <td colspan="1">Произошла внутренняя ошибка сервиса</td>
+        </tr>
+        <tr>
+            <td>503</td>
+            <td>
+                <p>Нет лицензии на запрошенный сервис</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
