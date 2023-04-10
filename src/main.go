@@ -14,12 +14,12 @@ func main() {
 
 	// fmt.Println(codes)
 
-	// b, err := os.ReadFile("errorcodes.html") // just pass the file name
+	// codes, err := os.ReadFile("errorcodes.html") // just pass the file name
 	// if err != nil {
 	// 	panic(err)
 	// }
 
-	// for i, item := range parseResponseTable(codes) {
+	// for i, item := range parseResponseTable(string(codes)) {
 	// 	fmt.Printf("%v %v\t\t%v\n", i, item.ResponseCode, item.Description)
 	// }
 
@@ -28,9 +28,9 @@ func main() {
 		log.Fatalf("Unable gain access to document: %v", err)
 	}
 
-	response, err := createTable(srv)
+	response, err := createTable(srv, docId, make([]TableRow, 4))
 	if err != nil {
-		log.Fatalf("Unable gain access to document: %v", err)
+		log.Fatalf("table craetion fail: %v", err)
 	}
 
 	log.Println(response)
