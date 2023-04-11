@@ -34,6 +34,12 @@ func insertTableRequest(rows []TableRow) *docs.Request {
 }
 
 func createTable(srv *docs.Service, docId string, rows []TableRow) (*docs.BatchUpdateDocumentResponse, error) {
+	const (
+		StartIndex       = 5
+		RightColumnShift = 2
+		NextRowShift     = 3
+	)
+
 	doc, err := srv.Documents.Get(docId).Do()
 	if err != nil {
 		return nil, fmt.Errorf("Unable to retrieve data from document: %v", err)
@@ -46,7 +52,7 @@ func createTable(srv *docs.Service, docId string, rows []TableRow) (*docs.BatchU
 	}
 
 	requests = append(requests, insertTableRequest(rows))
-	var currentLeftIndex int64 = 5
+	var currentLeftIndex int64 = StartIndex
 	for _, row := range rows {
 		text_left := row.ResponseCode
 		text_right := row.Description
@@ -55,13 +61,13 @@ func createTable(srv *docs.Service, docId string, rows []TableRow) (*docs.BatchU
 			Text:     text_left,
 			Location: &docs.Location{Index: currentLeftIndex},
 		}})
-		currentLeftIndex += int64(utf8.RuneCountInString(text_left)) + 2
+		currentLeftIndex += int64(utf8.RuneCountInString(text_left)) + RightColumnShift
 
 		requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
 			Text:     text_right,
 			Location: &docs.Location{Index: currentLeftIndex},
 		}})
-		currentLeftIndex += int64(utf8.RuneCountInString(text_right)) + 3
+		currentLeftIndex += int64(utf8.RuneCountInString(text_right)) + NextRowShift
 	}
 
 	request := docs.BatchUpdateDocumentRequest{Requests: requests}
