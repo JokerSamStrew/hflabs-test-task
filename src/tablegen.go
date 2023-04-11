@@ -55,13 +55,13 @@ func createTable(srv *docs.Service, docId string, rows []TableRow) (*docs.BatchU
 			Text:     text_left,
 			Location: &docs.Location{Index: currentLeftIndex},
 		}})
+		currentLeftIndex += int64(utf8.RuneCountInString(text_left)) + 2
 
 		requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
 			Text:     text_right,
-			Location: &docs.Location{Index: currentLeftIndex + int64(utf8.RuneCountInString(text_left)) + 2},
+			Location: &docs.Location{Index: currentLeftIndex},
 		}})
-
-		currentLeftIndex += int64(utf8.RuneCountInString(text_left)) + int64(utf8.RuneCountInString(text_right)) + 5
+		currentLeftIndex += int64(utf8.RuneCountInString(text_right)) + 3
 	}
 
 	request := docs.BatchUpdateDocumentRequest{Requests: requests}
