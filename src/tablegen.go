@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 
 	"google.golang.org/api/docs/v1"
 )
@@ -45,31 +46,16 @@ func createTable(srv *docs.Service, docId string, rows []TableRow) (*docs.BatchU
 	}
 
 	requests = append(requests, insertTableRequest(rows))
-
-	requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
-		Text:     "Test1",
-		Location: &docs.Location{Index: 5},
-	}})
-	requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
-		Text:     "Test2",
-		Location: &docs.Location{Index: 12},
-	}})
-	requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
-		Text:     "Test3",
-		Location: &docs.Location{Index: 20},
-	}})
-	requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
-		Text:     "Test4",
-		Location: &docs.Location{Index: 27},
-	}})
-	requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
-		Text:     "Test5",
-		Location: &docs.Location{Index: 35},
-	}})
-	requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
-		Text:     "Test6",
-		Location: &docs.Location{Index: 42},
-	}})
+	for i, _ := range rows {
+		requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
+			Text:     "Test" + strconv.Itoa(i),
+			Location: &docs.Location{Index: int64(5 + 15*i)},
+		}})
+		requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
+			Text:     "Test" + strconv.Itoa(i),
+			Location: &docs.Location{Index: int64(12 + 15*i)},
+		}})
+	}
 
 	request := docs.BatchUpdateDocumentRequest{Requests: requests}
 	response, err := srv.Documents.BatchUpdate(docId, &request).Do()
