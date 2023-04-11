@@ -46,15 +46,23 @@ func createTable(srv *docs.Service, docId string, rows []TableRow) (*docs.BatchU
 	}
 
 	requests = append(requests, insertTableRequest(rows))
+	var currentLeftIndex, currentRightIndex int64 = 0, 0
 	for i, _ := range rows {
+		text_left, text_right := "Test"+strconv.Itoa(i), "Test"+strconv.Itoa(i)
+		currentLeftIndex += int64(len(text_left))
 		requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
-			Text:     "Test" + strconv.Itoa(i),
-			Location: &docs.Location{Index: int64(5 + 15*i)},
+			Text:     text_left,
+			Location: &docs.Location{Index: currentLeftIndex},
 		}})
+		currentRightIndex += int64(2 + len(text_left) + len(text_right))
 		requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
-			Text:     "Test" + strconv.Itoa(i),
-			Location: &docs.Location{Index: int64(12 + 15*i)},
+			Text:     text_right,
+			Location: &docs.Location{Index: currentRightIndex},
 		}})
+
+		fmt.Printf("Left: %v Right: %v\n", currentLeftIndex, currentRightIndex)
+		currentLeftIndex += 10
+		currentRightIndex += 3
 	}
 
 	request := docs.BatchUpdateDocumentRequest{Requests: requests}

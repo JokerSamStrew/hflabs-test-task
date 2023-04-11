@@ -28,9 +28,9 @@ func main() {
 		log.Fatalf("Unable gain access to document: %v", err)
 	}
 
-	response, err := createTable(srv, docId, make([]TableRow, 4))
+	response, err := createTable(srv, docId, make([]TableRow, 10))
 	if err != nil {
-		log.Fatalf("table craetion fail: %v", err)
+		log.Fatalf("table creation fail: %v", err)
 	}
 
 	log.Println(response)
