@@ -28,7 +28,14 @@ func main() {
 		log.Fatalf("Unable gain access to document: %v", err)
 	}
 
-	response, err := createTable(srv, docId, make([]TableRow, 10))
+	response, err := createTable(srv, docId, []TableRow{
+		{"Left1", "Right1"},
+		{"Left1", "Right1"},
+		{"Left1", "Right1"},
+		{"Left1", "Right1"},
+		{"Left1", "Right1"},
+		{"Left1", "Right1"},
+	})
 	if err != nil {
 		log.Fatalf("table creation fail: %v", err)
 	}

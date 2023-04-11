@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"strconv"
+	"unicode/utf8"
 
 	"google.golang.org/api/docs/v1"
 )
@@ -46,23 +46,22 @@ func createTable(srv *docs.Service, docId string, rows []TableRow) (*docs.BatchU
 	}
 
 	requests = append(requests, insertTableRequest(rows))
-	var currentLeftIndex, currentRightIndex int64 = 0, 0
-	for i, _ := range rows {
-		text_left, text_right := "Test"+strconv.Itoa(i), "Test"+strconv.Itoa(i)
-		currentLeftIndex += int64(len(text_left))
+	var currentLeftIndex int64 = 5
+	for _, row := range rows {
+		text_left := row.ResponseCode
+		text_right := row.Description
+
 		requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
 			Text:     text_left,
 			Location: &docs.Location{Index: currentLeftIndex},
 		}})
-		currentRightIndex += int64(2 + len(text_left) + len(text_right))
+
 		requests = append(requests, &docs.Request{InsertText: &docs.InsertTextRequest{
 			Text:     text_right,
-			Location: &docs.Location{Index: currentRightIndex},
+			Location: &docs.Location{Index: currentLeftIndex + int64(utf8.RuneCountInString(text_left)) + 2},
 		}})
 
-		fmt.Printf("Left: %v Right: %v\n", currentLeftIndex, currentRightIndex)
-		currentLeftIndex += 10
-		currentRightIndex += 3
+		currentLeftIndex += int64(utf8.RuneCountInString(text_left)) + int64(utf8.RuneCountInString(text_right)) + 5
 	}
 
 	request := docs.BatchUpdateDocumentRequest{Requests: requests}
